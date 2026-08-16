@@ -65,14 +65,14 @@ if not exist "booking_system_frontend\.env" (
 )
 
 :: Launch frontend in a new window
-start "Galaxium Frontend - http://localhost:5173" cmd /k "cd booking_system_frontend && npm run dev"
+start "Galaxium Frontend - http://localhost:5174" cmd /k "cd booking_system_frontend && npm run dev"
 
-echo       Frontend starting on http://localhost:5173
+echo       Frontend starting on http://localhost:5174
 echo.
 echo  ====================================================
 echo   Galaxium Travels is running!
 echo.
-echo    Frontend:  http://localhost:5173
+echo    Frontend:  http://localhost:5174
 echo    Backend:   http://localhost:8081
 echo    API Docs:  http://localhost:8081/docs
 echo    MCP:       http://localhost:8081/mcp
