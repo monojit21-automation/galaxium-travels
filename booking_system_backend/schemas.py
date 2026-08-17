@@ -1,6 +1,5 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-
 
 class FlightOut(BaseModel):
     flight_id: int
@@ -17,7 +16,7 @@ class FlightOut(BaseModel):
 
 class BookingRequest(BaseModel):
     user_id: int
-    name: str
+    name: str=Field(min_length=2, max_length=100)
     flight_id: int
 
 
@@ -33,7 +32,7 @@ class BookingOut(BaseModel):
 
 
 class UserRegistration(BaseModel):
-    name: str
+    name: str = Field(min_length=2, max_length=100)
     email: EmailStr
 
 
