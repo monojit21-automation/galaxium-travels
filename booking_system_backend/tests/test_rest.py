@@ -58,6 +58,47 @@ class TestRegisterEndpoint:
         assert data["success"] == False
         assert data["error_code"] == "EMAIL_EXISTS"
 
+    def test_register_name_too_short(self, client):
+        """Name must be at least 2 characters."""
+        response = client.post("/register", json={
+            "name": "A",
+            "email": "valid@example.com"
+        })
+        assert response.status_code == 422
+        assert "detail" in response.json()
+
+    def test_register_name_too_long(self, client):
+        """Name must not exceed 100 characters."""
+        response = client.post("/register", json={
+            "name": "A" * 101,
+            "email": "valid@example.com"
+        })
+        assert response.status_code == 422
+
+    def test_register_invalid_email(self, client):
+        """Email must be a valid format."""
+        response = client.post("/register", json={
+            "name": "John Doe",
+            "email": "not-an-email"
+        })
+        assert response.status_code == 422
+
+    def test_register_boundary_name_lengths(self, client, db_session):
+        """Exactly 2 and 100 character names should be accepted."""
+        # Min boundary
+        response = client.post("/register", json={
+            "name": "Jo",
+            "email": "min@example.com"
+        })
+        assert response.status_code == 200
+
+        # Max boundary
+        response = client.post("/register", json={
+            "name": "J" * 100,
+            "email": "max@example.com"
+        })
+        assert response.status_code == 200
+
 
 class TestUserEndpoint:
     """Test /user endpoint."""
@@ -134,6 +175,30 @@ class TestBookEndpoint:
         data = response.json()
         assert data["success"] == False
         assert data["error_code"] == "FLIGHT_NOT_FOUND"
+
+    def test_book_name_too_short(self, client, db_session, sample_user_data):
+        """Booking name must be at least 2 characters."""
+        user_response = client.post("/register", json=sample_user_data)
+        user_id = user_response.json()["user_id"]
+
+        response = client.post("/book", json={
+            "user_id": user_id,
+            "name": "X",
+            "flight_id": 1
+        })
+        assert response.status_code == 422
+
+    def test_book_name_too_long(self, client, db_session, sample_user_data):
+        """Booking name must not exceed 100 characters."""
+        user_response = client.post("/register", json=sample_user_data)
+        user_id = user_response.json()["user_id"]
+
+        response = client.post("/book", json={
+            "user_id": user_id,
+            "name": "X" * 101,
+            "flight_id": 1
+        })
+        assert response.status_code == 422
 
 
 class TestBookingsEndpoint:
