@@ -34,6 +34,28 @@ class TestFlightService:
         assert result[0].origin == "Earth"
         assert result[0].destination == "Mars"
 
+    def test_get_flight_by_id_success(self, db_session):
+        db_session.add(Flight(
+            origin="Earth",
+            destination="Mars",
+            departure_time="2099-01-01T09:00:00Z",
+            arrival_time="2099-01-01T17:00:00Z",
+            price=1000000,
+            seats_available=5,
+        ))
+        db_session.commit()
+        existing = db_session.query(Flight).first()
+
+        result = flight.get_flight_by_id(db_session, existing.flight_id)
+        assert result is not None
+        assert result.flight_id == existing.flight_id
+        assert result.origin == "Earth"
+        assert result.destination == "Mars"
+
+    def test_get_flight_by_id_not_found(self, db_session):
+        result = flight.get_flight_by_id(db_session, 999)
+        assert result is None
+
 
 class TestUserService:
     """Test user service functions."""

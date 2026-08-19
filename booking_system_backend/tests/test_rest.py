@@ -36,6 +36,34 @@ class TestFlightsEndpoint:
         assert data[0]["destination"] == "Mars"
 
 
+class TestGetFlightByIdEndpoint:
+    def test_get_flight_by_id_success(self, client, db_session):
+        db_session.add(Flight(
+            origin="Earth",
+            destination="Mars",
+            departure_time="2099-01-01T09:00:00Z",
+            arrival_time="2099-01-01T17:00:00Z",
+            price=1000000,
+            seats_available=5,
+        ))
+        db_session.commit()
+        existing = db_session.query(Flight).first()
+
+        response = client.get(f"/flights/{existing.flight_id}")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["flight_id"] == existing.flight_id
+        assert data["origin"] == "Earth"
+        assert data["destination"] == "Mars"
+
+    def test_get_flight_by_id_not_found(self, client, db_session):
+        response = client.get("/flights/999")
+        assert response.status_code == 404
+        data = response.json()
+        assert data["success"] is False
+        assert data["error_code"] == "FLIGHT_NOT_FOUND"
+
+
 class TestRegisterEndpoint:
     """Test /register endpoint."""
 
