@@ -143,7 +143,7 @@ def get_flights(db: Session = Depends(get_db)):
     return flight.list_flights(db)
 
 
-@app.get("/flights/{flight_id}", response_model=Union[FlightOut, ErrorResponse], responses={404: {"model": ErrorResponse}}, tags=["Flights"])
+@app.get("/flights/{flight_id}", response_model=FlightOut, responses={404: {"model": ErrorResponse}}, tags=["Flights"])
 def get_flight_by_id(flight_id: int, db: Session = Depends(get_db)):
     """Retrieve a specific flight by its flight_id."""
     result = flight.get_flight_by_id(db, flight_id)
