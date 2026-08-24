@@ -48,8 +48,8 @@ flowchart LR
         R2["POST /register"]
         R3["GET /user"]
         R4["POST /book"]
-        R5["GET /bookings/&lbrace;user_id&rbrace;"]
-        R6["POST /cancel/&lbrace;booking_id&rbrace;"]
+        R5["GET /bookings/#lbrace;user_id#rbrace;"]
+        R6["POST /cancel/#lbrace;booking_id#rbrace;"]
         R7["GET /"]
     end
 

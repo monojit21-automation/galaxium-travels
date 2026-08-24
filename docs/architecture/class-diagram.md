@@ -7,13 +7,13 @@ and the `BookingStatus` values inferred from seed data and frontend types.
 ```mermaid
 classDiagram
     class User {
-        +int user_id PK
+        +int user_id
         +String name
         +String email
     }
 
     class Flight {
-        +int flight_id PK
+        +int flight_id
         +String origin
         +String destination
         +String departure_time
@@ -23,9 +23,9 @@ classDiagram
     }
 
     class Booking {
-        +int booking_id PK
-        +int user_id FK
-        +int flight_id FK
+        +int booking_id
+        +int user_id
+        +int flight_id
         +String status
         +String booking_time
     }

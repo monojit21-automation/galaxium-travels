@@ -8,22 +8,22 @@ and [`booking_system_backend/services/booking.py`](../../booking_system_backend/
 ```mermaid
 sequenceDiagram
     actor User
-    participant UI as React UI<br/>(pages/Flights.tsx)
-    participant ApiTs as services/api.ts<br/>(Axios)
-    participant REST as server.py<br/>(FastAPI)
+    participant UI as React UI - pages/Flights.tsx
+    participant ApiTs as services/api.ts - Axios
+    participant REST as server.py - FastAPI
     participant SvcUser as services/user.py
     participant SvcBooking as services/booking.py
-    participant DB as SQLite<br/>(booking.db)
+    participant DB as SQLite booking.db
 
     note over UI: User clicks "Book Now" on a flight card
 
     alt User not signed in
-        UI->>ApiTs: registerUser({name, email})<br/>POST /register
+        UI->>ApiTs: registerUser#lbrace;name, email#rbrace; POST /register
         ApiTs->>REST: HTTP POST /register
         REST->>SvcUser: register_user(db, name, email)
         SvcUser->>DB: SELECT WHERE email=?
         alt Email already exists
-            SvcUser-->>REST: ErrorResponse{EMAIL_EXISTS}
+            SvcUser-->>REST: ErrorResponse#lbrace;EMAIL_EXISTS#rbrace;
             REST-->>ApiTs: HTTP 200 + ErrorResponse
             ApiTs-->>UI: isErrorResponse() == true → show error
         else New user
@@ -33,12 +33,12 @@ sequenceDiagram
             ApiTs-->>UI: user stored in useUser() context
         end
 
-        UI->>ApiTs: getUserByCredentials(name, email)<br/>GET /user?name=&email=
+        UI->>ApiTs: getUserByCredentials GET /user?name=and email=
         ApiTs->>REST: HTTP GET /user
         REST->>SvcUser: get_user(db, name, email)
         SvcUser->>DB: SELECT WHERE name=? AND email=?
         alt Not found
-            SvcUser-->>REST: ErrorResponse{USER_NOT_FOUND}
+            SvcUser-->>REST: ErrorResponse#lbrace;USER_NOT_FOUND#rbrace;
             REST-->>ApiTs: HTTP 200 + ErrorResponse
             ApiTs-->>UI: isErrorResponse() == true → show error
         else Found
@@ -49,39 +49,39 @@ sequenceDiagram
     end
 
     note over UI,DB: ── QUOTE / HOLD STEP (NOT IMPLEMENTED) ──────────────────
-    note over UI: booking_system_inventory_hold_service does not exist.<br/>No quote or hold call is made before booking.<br/>Seat availability is checked inline during book_flight().
+    note over UI: booking_system_inventory_hold_service does not exist. No quote or hold call is made. Seat availability is checked inline during book_flight.
 
-    UI->>ApiTs: bookFlight({user_id, name, flight_id})<br/>POST /book
+    UI->>ApiTs: bookFlight#lbrace;user_id, name, flight_id#rbrace; POST /book
     ApiTs->>REST: HTTP POST /book
     REST->>SvcBooking: book_flight(db, user_id, name, flight_id)
 
     SvcBooking->>DB: SELECT Flight WHERE flight_id=?
     alt Flight not found
-        SvcBooking-->>REST: ErrorResponse{FLIGHT_NOT_FOUND}
+        SvcBooking-->>REST: ErrorResponse#lbrace;FLIGHT_NOT_FOUND#rbrace;
         REST-->>ApiTs: HTTP 200 + ErrorResponse
         ApiTs-->>UI: isErrorResponse() == true → toast.error
     end
 
     SvcBooking->>DB: check seats_available >= 1
     alt No seats
-        SvcBooking-->>REST: ErrorResponse{NO_SEATS_AVAILABLE}
+        SvcBooking-->>REST: ErrorResponse#lbrace;NO_SEATS_AVAILABLE#rbrace;
         REST-->>ApiTs: HTTP 200 + ErrorResponse
         ApiTs-->>UI: isErrorResponse() == true → toast.error
     end
 
     SvcBooking->>DB: SELECT User WHERE user_id=? AND name=?
     alt User not found
-        SvcBooking-->>REST: ErrorResponse{USER_NOT_FOUND}
+        SvcBooking-->>REST: ErrorResponse#lbrace;USER_NOT_FOUND#rbrace;
         REST-->>ApiTs: HTTP 200 + ErrorResponse
         ApiTs-->>UI: isErrorResponse() == true → toast.error
     else Name mismatch
-        SvcBooking-->>REST: ErrorResponse{NAME_MISMATCH}
+        SvcBooking-->>REST: ErrorResponse#lbrace;NAME_MISMATCH#rbrace;
         REST-->>ApiTs: HTTP 200 + ErrorResponse
         ApiTs-->>UI: isErrorResponse() == true → toast.error
     end
 
     SvcBooking->>DB: UPDATE Flight SET seats_available -= 1
-    SvcBooking->>DB: INSERT Booking(status="booked", booking_time=utcnow().isoformat())
+    SvcBooking->>DB: INSERT Booking status=booked booking_time=utcnow
     SvcBooking->>DB: COMMIT
     SvcBooking-->>REST: BookingOut
     REST-->>ApiTs: HTTP 200 + BookingOut
