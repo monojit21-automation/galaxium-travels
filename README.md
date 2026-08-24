@@ -15,20 +15,23 @@ A complete full-stack application for booking interplanetary space travel, featu
 ## 🏗️ Architecture
 
 ```
-galaxium-travels-infrastructure/
+galaxium-travels/
 ├── booking_system_backend/     # FastAPI backend (Python)
 │   ├── server.py              # Main server with REST & MCP
 │   ├── services/              # Business logic layer
 │   ├── models.py              # SQLAlchemy ORM models
+│   ├── schemas.py             # Pydantic request/response models
+│   ├── db.py                  # Database session & init
+│   ├── seed.py                # Demo data seeding
 │   └── tests/                 # Test suite
 │
 ├── booking_system_frontend/    # React frontend (TypeScript)
 │   ├── src/
 │   │   ├── components/        # Reusable UI components
-│   │   ├── pages/            # Route pages
-│   │   ├── services/         # API integration
-│   │   └── types/            # TypeScript definitions
-│   └── dist/                 # Production build
+│   │   ├── pages/             # Route pages
+│   │   ├── services/          # API integration
+│   │   └── types/             # TypeScript definitions
+│   └── dist/                  # Production build
 │
 ├── start.sh                   # Unix/Mac startup script
 └── start.bat                  # Windows startup script
@@ -56,8 +59,8 @@ start.bat
 
 This will automatically:
 - ✅ Install all dependencies
-- ✅ Start the backend server on port 8080
-- ✅ Start the frontend dev server on port 5173
+- ✅ Start the backend server on port 8081
+- ✅ Start the frontend dev server on port 5174
 - ✅ Open both in separate terminal windows
 
 ### Option 2: Manual Start
@@ -82,10 +85,10 @@ npm run dev
 
 Once started, access:
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8080
-- **API Documentation**: http://localhost:8080/docs
-- **MCP Endpoint**: http://localhost:8080/mcp
+- **Frontend**: http://localhost:5174
+- **Backend API**: http://localhost:8081
+- **API Documentation**: http://localhost:8081/docs
+- **MCP Endpoint**: http://localhost:8081/mcp
 
 ## 📚 Documentation
 
@@ -160,7 +163,7 @@ npm run build
 ```bash
 cd booking_system_backend
 pip install -r requirements.txt
-uvicorn server:app --host 0.0.0.0 --port 8080
+uvicorn server:app --host 0.0.0.0 --port 8081
 ```
 
 ### Frontend
@@ -195,16 +198,16 @@ colors: {
 
 ### Backend won't start
 - Ensure Python 3.8+ is installed: `python --version`
-- Check if port 8080 is available
+- Check if port 8081 is available
 - Verify all dependencies are installed: `pip install -r requirements.txt`
 
 ### Frontend won't start
 - Ensure Node.js 18+ is installed: `node --version`
-- Check if port 5173 is available
+- Check if port 5174 is available
 - Delete `node_modules` and reinstall: `rm -rf node_modules && npm install`
 
 ### Connection Issues
-- Verify backend is running on http://localhost:8080
+- Verify backend is running on http://localhost:8081
 - Check CORS settings in backend
 - Ensure `.env` file exists in frontend with correct API URL
 
