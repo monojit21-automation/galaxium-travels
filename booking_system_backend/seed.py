@@ -43,16 +43,22 @@ def seed():
     db.commit()
     # Add demo bookings
     user_ids = [user.user_id for user in db.query(User).all()]
-    flight_ids = [flight.flight_id for flight in db.query(Flight).all()]
+    all_flights = db.query(Flight).all()
+    flight_ids = [f.flight_id for f in all_flights]
+    flight_price_map = {f.flight_id: f.price for f in all_flights}
     statuses = ["booked", "cancelled", "completed"]
+    seat_classes = ["Economy", "Business", "Galaxium"]
+    multipliers = {"Economy": 1.0, "Business": 1.3, "Galaxium": 1.5}
     bookings = []
     now = datetime.utcnow()
     for i in range(20):
         user_id = random.choice(user_ids)
         flight_id = random.choice(flight_ids)
         status = random.choice(statuses)
+        seat_class = random.choice(seat_classes)
+        price = flight_price_map[flight_id] * multipliers[seat_class]
         booking_time = (now - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23))).isoformat() + "Z"
-        bookings.append(Booking(user_id=user_id, flight_id=flight_id, status=status, booking_time=booking_time))
+        bookings.append(Booking(user_id=user_id, flight_id=flight_id, status=status, booking_time=booking_time, seat_class=seat_class, price=price))
     db.add_all(bookings)
     db.commit()
     db.close()

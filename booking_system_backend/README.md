@@ -24,8 +24,8 @@ pip install -r requirements.txt
 python server.py
 ```
 
-The server starts on port **8080** with:
-- REST endpoints at `/api/*`
+The server starts on port **8081** with:
+- REST endpoints at `/*`
 - MCP tools at `/mcp`
 - Health check at `/`
 
@@ -35,12 +35,12 @@ The server starts on port **8080** with:
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/flights` | List all available flights |
-| POST | `/api/book` | Book a flight |
-| GET | `/api/bookings/{user_id}` | Get user's bookings |
-| POST | `/api/cancel/{booking_id}` | Cancel a booking |
-| POST | `/api/register` | Register a new user |
-| GET | `/api/user?name=...&email=...` | Get user by name and email |
+| GET | `/flights` | List all available flights |
+| POST | `/book` | Book a flight |
+| GET | `/bookings/{user_id}` | Get user's bookings |
+| POST | `/cancel/{booking_id}` | Cancel a booking |
+| POST | `/register` | Register a new user |
+| GET | `/user?name=...&email=...` | Get user by name and email |
 
 ### MCP Tools
 
@@ -59,28 +59,28 @@ The server starts on port **8080** with:
 
 ```bash
 # List flights
-curl http://localhost:8080/api/flights
+curl http://localhost:8081/flights
 
 # Register a user
-curl -X POST http://localhost:8080/api/register \
+curl -X POST http://localhost:8081/register \
   -H "Content-Type: application/json" \
   -d '{"name": "John Doe", "email": "john@example.com"}'
 
 # Book a flight
-curl -X POST http://localhost:8080/api/book \
+curl -X POST http://localhost:8081/book \
   -H "Content-Type: application/json" \
   -d '{"user_id": 1, "name": "Alice", "flight_id": 1}'
 
 # Get bookings
-curl http://localhost:8080/api/bookings/1
+curl http://localhost:8081/bookings/1
 
 # Cancel a booking
-curl -X POST http://localhost:8080/api/cancel/1
+curl -X POST http://localhost:8081/cancel/1
 ```
 
 ### MCP (with Claude Code or MCP Inspector)
 
-Connect to `http://localhost:8080/mcp` and use the available tools:
+Connect to `http://localhost:8081/mcp` and use the available tools:
 
 ```
 list_flights()
@@ -139,7 +139,7 @@ doc
 docker build -t galaxium-booking .
 
 # Run
-docker run -p 8080:8080 galaxium-booking
+docker run -p 8081:8081 galaxium-booking
 ```
 
 ## Architecture

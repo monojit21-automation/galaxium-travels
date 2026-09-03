@@ -4,7 +4,10 @@ from models import User, Flight, Booking
 from schemas import BookingOut, ErrorResponse
 
 
-def book_flight(db: Session, user_id: int, name: str, flight_id: int) -> BookingOut | ErrorResponse:
+_SEAT_MULTIPLIERS = {"Economy": 1.0, "Business": 1.3, "Galaxium": 1.5}
+
+
+def book_flight(db: Session, user_id: int, name: str, flight_id: int, seat_class: str = "Economy") -> BookingOut | ErrorResponse:
     """Book a seat on a specific flight for a user."""
     # Check flight exists
     flight = db.query(Flight).filter(Flight.flight_id == flight_id).first()
@@ -41,12 +44,16 @@ def book_flight(db: Session, user_id: int, name: str, flight_id: int) -> Booking
             )
 
     # Create booking
+    multiplier = _SEAT_MULTIPLIERS.get(seat_class, 1.0)
+    booking_price = flight.price * multiplier
     flight.seats_available -= 1
     new_booking = Booking(
         user_id=user_id,
         flight_id=flight_id,
         status="booked",
-        booking_time=datetime.utcnow().isoformat()
+        booking_time=datetime.utcnow().isoformat(),
+        seat_class=seat_class,
+        price=booking_price,
     )
     db.add(new_booking)
     db.commit()

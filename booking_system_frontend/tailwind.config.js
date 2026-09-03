@@ -4,6 +4,11 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    // Seat-class pill styles — assembled dynamically at runtime so JIT cannot detect them
+    'border-green-400', 'text-green-400', 'bg-green-400/20',
+    'border-yellow-400', 'text-yellow-400', 'bg-yellow-400/20',
+  ],
   theme: {
     extend: {
       colors: {

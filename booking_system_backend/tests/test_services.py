@@ -92,10 +92,52 @@ class TestBookingService:
         assert result.status == "booked"
         assert result.user_id == user_obj.user_id
         assert result.flight_id == flight_obj.flight_id
+        assert result.seat_class == "Economy"
+        assert result.price == flight_obj.price * 1.0
 
         # Verify seat was decremented
         db_session.refresh(flight_obj)
         assert flight_obj.seats_available == 4
+
+    def test_book_flight_business_class(self, db_session):
+        """Test booking with Business class stores correct price."""
+        db_session.add(User(name="Test User", email="test@example.com"))
+        db_session.add(Flight(
+            origin="Earth",
+            destination="Mars",
+            departure_time="2099-01-01T09:00:00Z",
+            arrival_time="2099-01-01T17:00:00Z",
+            price=1000000,
+            seats_available=5
+        ))
+        db_session.commit()
+
+        user_obj = db_session.query(User).first()
+        flight_obj = db_session.query(Flight).first()
+
+        result = booking.book_flight(db_session, user_obj.user_id, "Test User", flight_obj.flight_id, seat_class="Business")
+        assert result.seat_class == "Business"
+        assert result.price == flight_obj.price * 1.3
+
+    def test_book_flight_galaxium_class(self, db_session):
+        """Test booking with Galaxium class stores correct price."""
+        db_session.add(User(name="Test User", email="test@example.com"))
+        db_session.add(Flight(
+            origin="Earth",
+            destination="Mars",
+            departure_time="2099-01-01T09:00:00Z",
+            arrival_time="2099-01-01T17:00:00Z",
+            price=1000000,
+            seats_available=5
+        ))
+        db_session.commit()
+
+        user_obj = db_session.query(User).first()
+        flight_obj = db_session.query(Flight).first()
+
+        result = booking.book_flight(db_session, user_obj.user_id, "Test User", flight_obj.flight_id, seat_class="Galaxium")
+        assert result.seat_class == "Galaxium"
+        assert result.price == flight_obj.price * 1.5
 
     def test_book_flight_not_found(self, db_session):
         """Test booking non-existent flight."""

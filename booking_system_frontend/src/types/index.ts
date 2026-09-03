@@ -16,6 +16,8 @@ export interface Booking {
   flight_id: number;
   status: 'booked' | 'cancelled' | 'completed';
   booking_time: string;
+  seat_class?: string;
+  price?: number;
 }
 
 export interface User {
@@ -29,6 +31,7 @@ export interface BookingRequest {
   user_id: number;
   name: string;
   flight_id: number;
+  seat_class?: string;
 }
 
 export interface UserRegistration {

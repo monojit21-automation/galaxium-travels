@@ -118,6 +118,36 @@ class TestBookEndpoint:
         data = response.json()
         assert data["status"] == "booked"
         assert data["user_id"] == user_id
+        assert data["seat_class"] == "Economy"
+        assert data["price"] == flight.price * 1.0
+
+    def test_book_flight_business_class(self, client, db_session, sample_user_data):
+        """Test booking with Business class returns correct price."""
+        user_response = client.post("/register", json=sample_user_data)
+        user_id = user_response.json()["user_id"]
+
+        db_session.add(Flight(
+            origin="Earth",
+            destination="Mars",
+            departure_time="2099-01-01T09:00:00Z",
+            arrival_time="2099-01-01T17:00:00Z",
+            price=1000000,
+            seats_available=5
+        ))
+        db_session.commit()
+        flight = db_session.query(Flight).first()
+
+        response = client.post("/book", json={
+            "user_id": user_id,
+            "name": sample_user_data["name"],
+            "flight_id": flight.flight_id,
+            "seat_class": "Business",
+        })
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["seat_class"] == "Business"
+        assert data["price"] == flight.price * 1.3
 
     def test_book_flight_not_found(self, client, db_session, sample_user_data):
         """Test booking non-existent flight."""

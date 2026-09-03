@@ -19,6 +19,7 @@ class BookingRequest(BaseModel):
     user_id: int
     name: str
     flight_id: int
+    seat_class: str = "Economy"
 
 
 class BookingOut(BaseModel):
@@ -27,6 +28,8 @@ class BookingOut(BaseModel):
     flight_id: int
     status: str
     booking_time: str
+    seat_class: str | None = None
+    price: float | None = None
 
     class Config:
         from_attributes = True

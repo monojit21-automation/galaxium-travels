@@ -11,6 +11,18 @@ interface BookingCardProps {
   isCancelling?: boolean;
 }
 
+/** Returns Tailwind classes for a seat class badge. */
+const getSeatClassStyle = (seatClass: string): string => {
+  switch (seatClass) {
+    case 'Business':
+      return 'text-yellow-400 border-yellow-400';
+    case 'Galaxium':
+      return 'text-white border-transparent bg-cosmic-gradient';
+    default:
+      return 'text-green-400 border-green-400';
+  }
+};
+
 export const BookingCard = ({ booking, flight, onCancel, isCancelling }: BookingCardProps) => {
   const getStatusIcon = () => {
     switch (booking.status) {
@@ -74,6 +86,11 @@ export const BookingCard = ({ booking, flight, onCancel, isCancelling }: Booking
                 {flight.origin} → {flight.destination}
               </h3>
               <p className="text-sm text-star-white/60">Flight #{flight.flight_id}</p>
+              {booking.seat_class && (
+                <span className={`inline-block mt-1 px-2 py-0.5 rounded border text-xs font-semibold ${getSeatClassStyle(booking.seat_class)}`}>
+                  {booking.seat_class}
+                </span>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -94,7 +111,7 @@ export const BookingCard = ({ booking, flight, onCancel, isCancelling }: Booking
             <div className="flex items-center justify-between pt-3 border-t border-white/10">
               <span className="text-sm text-star-white/60">Price</span>
               <span className="text-lg font-bold text-star-white">
-                {formatCurrency(flight.price)}
+                {formatCurrency(booking.price ?? flight.price)}
               </span>
             </div>
           </div>
