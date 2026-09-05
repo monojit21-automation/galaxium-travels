@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastmcp import FastMCP
 from sqlalchemy.orm import Session
 from typing import Union
@@ -140,6 +141,20 @@ def health_check():
 def get_flights(db: Session = Depends(get_db)):
     """List all available flights with origin, destination, times, price, and seats available."""
     return flight.list_flights(db)
+
+
+@app.get("/flights/{flight_id}", response_model=FlightOut, responses={404: {"model": ErrorResponse}}, tags=["Flights"])
+def get_flight_by_id(flight_id: int, db: Session = Depends(get_db)):
+    """Retrieve a specific flight by its flight_id."""
+    result = flight.get_flight_by_id(db, flight_id)
+    if result is None:
+        error = ErrorResponse(
+            error="Flight not found",
+            error_code="FLIGHT_NOT_FOUND",
+            details=f"The specified flight_id {flight_id} does not exist in our system.",
+        )
+        return JSONResponse(status_code=404, content=error.model_dump())
+    return result
 
 
 @app.post("/book", response_model=Union[BookingOut, ErrorResponse], tags=["Bookings"])
